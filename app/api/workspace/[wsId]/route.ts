@@ -27,6 +27,10 @@ export async function PATCH(
     const workspace = await workspaceDb.update(wsId, {
       name: body.name,
       description: body.description,
+      logoUrl: body.logoUrl,
+      timezone: body.timezone,
+      onboardingComplete: body.onboardingComplete,
+      agentConfig: body.agentConfig,
     });
     return NextResponse.json({ success: true, workspace });
   } catch {

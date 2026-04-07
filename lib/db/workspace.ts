@@ -10,6 +10,7 @@ export interface CreateWorkspaceInput {
 export interface UpdateWorkspaceInput {
   name?: string;
   description?: string;
+  agentConfig?: Record<string, unknown> | null;
 }
 
 export const workspaceDb = {
