@@ -1,7 +1,7 @@
 /**
  * PBL (Project-Based Learning) Type Definitions
  *
- * Migrated from PBL-Nano with PBL prefix to avoid conflicts with MAIC-OSS types.
+ * Migrated from PBL-Nano with PBL prefix to avoid conflicts with NexusCollab types.
  */
 
 export type PBLMode = 'project_info' | 'agent' | 'issueboard' | 'idle';
