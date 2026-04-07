@@ -3,33 +3,57 @@
 import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
+import { Menu } from 'lucide-react';
+import { Sheet } from '@/components/ui/sheet';
 
 const SIDEBAR_KEY = 'nexus-sidebar-collapsed';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(SIDEBAR_KEY);
     if (saved !== null) setCollapsed(saved === 'true');
+
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleToggle = () => {
-    setCollapsed((prev) => {
-      const next = !prev;
-      localStorage.setItem(SIDEBAR_KEY, String(next));
-      return next;
-    });
+    if (isMobile) {
+      setMobileOpen(true);
+    } else {
+      setCollapsed((prev) => {
+        const next = !prev;
+        localStorage.setItem(SIDEBAR_KEY, String(next));
+        return next;
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar collapsed={collapsed} onToggle={handleToggle} />
+      {!isMobile && (
+        <Sidebar collapsed={collapsed} onToggle={handleToggle} />
+      )}
+
+      {isMobile && (
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <Sheet.Content side="left" className="p-0 w-64">
+            <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
+          </Sheet.Content>
+        </Sheet>
+      )}
+
       <div
         className="transition-all duration-200"
-        style={{ marginLeft: collapsed ? '64px' : '256px' }}
+        style={{ marginLeft: isMobile ? 0 : collapsed ? '64px' : '256px' }}
       >
-        <Header />
+        <Header onMenuToggle={isMobile ? handleToggle : undefined} />
         <main className="pt-14">
           {children}
         </main>

@@ -1,9 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, Search, ChevronRight } from 'lucide-react';
+import { Bell, Search, ChevronRight, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+
+interface HeaderProps {
+  onMenuToggle?: () => void;
+}
 
 interface BreadcrumbSegment {
   label: string;
@@ -38,12 +42,21 @@ function buildBreadcrumbs(pathname: string): BreadcrumbSegment[] {
   return segments;
 }
 
-export function Header() {
+export function Header({ onMenuToggle }: HeaderProps) {
   const pathname = usePathname();
   const breadcrumbs = buildBreadcrumbs(pathname);
 
   return (
     <header className="fixed left-0 right-0 top-0 z-30 flex h-14 items-center gap-4 border-b border-slate-800 bg-background/80 backdrop-blur-md px-6">
+      {onMenuToggle && (
+        <button
+          onClick={onMenuToggle}
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 mr-2"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
+      )}
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm">
         {breadcrumbs.map((seg, i) => (
