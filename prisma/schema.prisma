@@ -7,13 +7,17 @@ datasource db {
 }
 
 model Workspace {
-  id          String            @id @default(cuid())
-  name        String
-  description String?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  tasks       Task[]
-  members     WorkspaceMember[]
+  id                  String            @id @default(cuid())
+  name                String
+  description         String?
+  logoUrl             String?
+  timezone            String            @default("UTC")
+  onboardingComplete  Boolean           @default(false)
+  agentConfig         Json?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  tasks               Task[]
+  members             WorkspaceMember[]
 }
 
 model User {
