@@ -1,3 +1,5 @@
+'use client';
+
 import { SettingsLayout } from '@/components/workspace/settings-layout';
 import { CreditCard } from 'lucide-react';
 import { useParams } from 'next/navigation';

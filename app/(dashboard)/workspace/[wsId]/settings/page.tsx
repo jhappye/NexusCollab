@@ -1,7 +1,10 @@
-import { redirect } from 'next/navigation';
-import { useParams } from 'next/navigation';
+'use client';
+
+import { useParams, useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
   const { wsId } = useParams<{ wsId: string }>();
-  redirect(`/workspace/${wsId}/settings/general`);
+  const router = useRouter();
+  router.push(`/workspace/${wsId}/settings/general`);
+  return null;
 }
