@@ -79,6 +79,16 @@ export default function ChatRoomClient({
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'ACTIVE': return '进行中';
+      case 'DRAFT': return '草稿';
+      case 'REVIEWING': return '待评审';
+      case 'COMPLETED': return '已完成';
+      default: return status;
+    }
+  };
+
   if (isMobile) {
     return (
       <div className="flex flex-col h-[calc(100vh-3.5rem)]">
@@ -88,13 +98,13 @@ export default function ChatRoomClient({
               key={tab}
               onClick={() => setMobileTab(tab)}
               className={cn(
-                'flex-1 py-3 text-sm font-medium capitalize transition-colors',
+                'flex-1 py-3 text-sm font-medium transition-colors',
                 mobileTab === tab
                   ? 'text-indigo-400 border-b-2 border-indigo-500'
                   : 'text-slate-400 hover:text-slate-200'
               )}
             >
-              {tab}
+              {tab === 'brief' ? '概览' : tab === 'chat' ? '聊天' : '评价'}
             </button>
           ))}
         </div>
@@ -113,7 +123,7 @@ export default function ChatRoomClient({
                       : 'bg-slate-700 text-slate-400'
                   }`}
                 >
-                  {task.status}
+                  {getStatusLabel(task.status)}
                 </span>
               </div>
               <ParticipantList participants={participants} />
@@ -131,7 +141,7 @@ export default function ChatRoomClient({
                 onSend={handleSend}
                 replyTo={replyTo}
                 onCancelReply={() => setReplyTo(null)}
-                disabled={task.status !== 'ACTIVE'}
+                disabled={task.status === 'COMPLETED'}
               />
             </div>
           )}
@@ -170,7 +180,7 @@ export default function ChatRoomClient({
                 : 'bg-slate-700 text-slate-400'
             }`}
           >
-            {task.status}
+            {getStatusLabel(task.status)}
           </span>
         </div>
 
@@ -184,7 +194,7 @@ export default function ChatRoomClient({
           onSend={handleSend}
           replyTo={replyTo}
           onCancelReply={() => setReplyTo(null)}
-          disabled={task.status !== 'ACTIVE'}
+          disabled={task.status === 'COMPLETED'}
         />
       </div>
 

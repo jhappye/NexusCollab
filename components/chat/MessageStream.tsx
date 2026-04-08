@@ -63,7 +63,7 @@ export function MessageStream({ initialMessages, onReply, onReact }: MessageStre
       {messages.length === 0 && (
         <div className="flex justify-center">
           <span className="text-xs text-muted-foreground">
-            No messages yet. Start the conversation!
+            暂无消息，开始对话吧！
           </span>
         </div>
       )}
@@ -85,7 +85,7 @@ export function MessageStream({ initialMessages, onReply, onReact }: MessageStre
 
       {threadingParent && (
         <div className="text-xs text-muted-foreground text-center py-1">
-          Replying to thread — <button onClick={() => setThreadingParent(null)} className="underline">cancel</button>
+          回复中 — <button onClick={() => setThreadingParent(null)} className="underline">取消</button>
         </div>
       )}
 

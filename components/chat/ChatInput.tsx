@@ -32,9 +32,9 @@ export function ChatInput({ onSend, disabled, replyTo, onCancelReply }: ChatInpu
     <div className="border-t border-slate-800 p-3">
       {replyTo && (
         <div className="flex items-center gap-2 mb-2 text-xs text-muted-foreground">
-          <span>Replying to thread</span>
+          <span>回复中</span>
           <button onClick={onCancelReply} className="underline hover:text-foreground">
-            Cancel
+            取消
           </button>
         </div>
       )}
@@ -45,7 +45,7 @@ export function ChatInput({ onSend, disabled, replyTo, onCancelReply }: ChatInpu
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
+          placeholder="输入消息..."
           disabled={disabled}
           rows={1}
           className={cn(

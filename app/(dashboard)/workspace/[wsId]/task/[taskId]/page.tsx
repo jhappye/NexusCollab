@@ -113,7 +113,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ wsId: str
                 {getStatusLabel(task.status)}
               </span>
             </div>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => router.push(`/workspace/${wsId}/settings`)}>
               <Settings className="w-4 h-4 mr-1" /> 设置
             </Button>
           </div>
