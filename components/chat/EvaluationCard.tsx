@@ -14,10 +14,10 @@ export function EvaluationCard({ evaluation }: EvaluationCardProps) {
     <div className="rounded-lg border border-slate-800 bg-slate-900 p-3 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-slate-300">
-          {evaluation.targetUser?.name ?? 'Participant'}
+          {evaluation.targetUser?.name ?? '参与者'}
         </span>
         <span className="text-[10px] text-muted-foreground">
-          {new Date(evaluation.createdAt).toLocaleDateString()}
+          {new Date(evaluation.createdAt).toLocaleDateString('zh-CN')}
         </span>
       </div>
 
@@ -41,7 +41,7 @@ export function EvaluationCard({ evaluation }: EvaluationCardProps) {
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-muted-foreground">Overall Score</p>
+          <p className="text-xs text-muted-foreground">综合评分</p>
           <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{evaluation.summary}</p>
         </div>
       </div>

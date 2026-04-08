@@ -113,7 +113,7 @@ export default function AgentsSettingsPage() {
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-slate-300">
-              Temperature: {temperature[0].toFixed(2)}
+              温度: {temperature[0].toFixed(2)}
             </label>
             <Slider
               value={temperature}

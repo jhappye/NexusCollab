@@ -50,20 +50,20 @@ export default function GeneralSettingsPage() {
     <SettingsLayout wsId={wsId} currentTab="general">
       <div className="space-y-6 max-w-lg">
         <div>
-          <h2 className="text-lg font-semibold">General Settings</h2>
-          <p className="text-sm text-muted-foreground">Manage your workspace name and preferences.</p>
+          <h2 className="text-lg font-semibold">通用设置</h2>
+          <p className="text-sm text-muted-foreground">管理班级名称和偏好设置</p>
         </div>
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Workspace Name</label>
+            <label className="text-xs font-medium text-slate-300">班级名称</label>
             <Input
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="My Workspace"
+              placeholder="我的班级"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Timezone</label>
+            <label className="text-xs font-medium text-slate-300">时区</label>
             <select
               className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200"
               value={timezone}
@@ -75,7 +75,7 @@ export default function GeneralSettingsPage() {
             </select>
           </div>
           <Button onClick={handleSave} disabled={saving} size="sm">
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? '保存中...' : '保存更改'}
           </Button>
         </div>
       </div>

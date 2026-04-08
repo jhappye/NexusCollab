@@ -13,8 +13,8 @@ export default function BillingSettingsPage() {
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-800 mb-4">
           <CreditCard className="h-6 w-6 text-slate-400" />
         </div>
-        <h2 className="text-lg font-semibold">Billing</h2>
-        <p className="text-sm text-muted-foreground mt-1">Billing integration coming soon.</p>
+        <h2 className="text-lg font-semibold">订阅</h2>
+        <p className="text-sm text-muted-foreground mt-1">订阅功能即将推出</p>
       </div>
     </SettingsLayout>
   );

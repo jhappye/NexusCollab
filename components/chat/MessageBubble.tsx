@@ -35,7 +35,7 @@ export function MessageBubble({ message, depth = 0, onReply, onReact }: MessageB
       {/* Author label */}
       <div className={cn('flex items-center gap-1.5 mb-1', isHuman && 'flex-row-reverse')}>
         <span className="text-[10px] font-medium text-muted-foreground">
-          {message.author.name ?? 'Unknown'}
+          {message.author.name ?? '未知用户'}
         </span>
         {agentRole && (
           <span
@@ -46,11 +46,11 @@ export function MessageBubble({ message, depth = 0, onReply, onReact }: MessageB
               agentRole === 'PEER' && 'bg-violet-500/20 text-violet-400',
             )}
           >
-            {agentRole}
+            {agentRole === 'EVALUATOR' ? '评价者' : agentRole === 'COACH' ? '教练' : '同伴'}
           </span>
         )}
         {message.isEdited && (
-          <span className="text-[9px] text-muted-foreground">(edited)</span>
+          <span className="text-[9px] text-muted-foreground">(已编辑)</span>
         )}
       </div>
 
@@ -89,7 +89,7 @@ export function MessageBubble({ message, depth = 0, onReply, onReact }: MessageB
             className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
           >
             <MessageSquare className="h-3 w-3" />
-            {message.replies?.length} {(message.replies?.length ?? 0) === 1 ? 'reply' : 'replies'}
+            {message.replies?.length} 条回复
           </button>
         )}
 
@@ -97,7 +97,7 @@ export function MessageBubble({ message, depth = 0, onReply, onReact }: MessageB
           onClick={() => onReply?.(message.id)}
           className="text-[10px] text-muted-foreground hover:text-foreground"
         >
-          Reply
+          回复
         </button>
       </div>
 

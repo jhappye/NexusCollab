@@ -23,7 +23,7 @@ export function EvaluatorSidebar({
   return (
     <aside className="w-[260px] shrink-0 border-r border-slate-800 bg-slate-900/50 overflow-y-auto">
       <div className="p-4 space-y-4">
-        <h2 className="text-sm font-semibold text-slate-200">Evaluator</h2>
+        <h2 className="text-sm font-semibold text-slate-200">评价者</h2>
 
         {latestEval ? (
           <EvaluationCard
@@ -39,7 +39,7 @@ export function EvaluatorSidebar({
         ) : (
           <div className="rounded-lg border border-slate-800 bg-slate-900 p-3 text-center">
             <p className="text-xs text-muted-foreground">
-              No evaluations yet
+              暂无评价
             </p>
           </div>
         )}
@@ -51,13 +51,13 @@ export function EvaluatorSidebar({
           variant="outline"
         >
           <PlayCircle className="h-4 w-4 mr-2" />
-          {isEvaluating ? 'Running...' : 'Run Evaluation'}
+          {isEvaluating ? '评价中...' : '开始评价'}
         </Button>
 
         {evaluations.length > 1 && (
           <div className="space-y-2">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              History
+              历史记录
             </h3>
             {evaluations.slice(1).map((eval_) => (
               <div
@@ -66,7 +66,7 @@ export function EvaluatorSidebar({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-400">
-                    {eval_.targetUser?.name ?? 'Unknown'}
+                    {eval_.targetUser?.name ?? '未知用户'}
                   </span>
                   {eval_.score !== null && (
                     <span className="text-xs font-medium text-indigo-400">

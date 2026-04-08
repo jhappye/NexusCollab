@@ -6,10 +6,10 @@ import { cn } from '@/lib/utils';
 import { Settings, Users, Bot, CreditCard } from 'lucide-react';
 
 const tabs = [
-  { href: 'general', label: 'General', icon: Settings },
-  { href: 'members', label: 'Members', icon: Users },
-  { href: 'agents', label: 'Agents', icon: Bot },
-  { href: 'billing', label: 'Billing', icon: CreditCard },
+  { href: 'general', label: '通用设置', icon: Settings },
+  { href: 'members', label: '成员管理', icon: Users },
+  { href: 'agents', label: '智能体', icon: Bot },
+  { href: 'billing', label: '订阅', icon: CreditCard },
 ] as const;
 
 type Tab = typeof tabs[number]['href'];
