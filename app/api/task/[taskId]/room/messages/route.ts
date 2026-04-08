@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { taskDb } from '@/lib/db/task';
 import { messageDb } from '@/lib/db/message';
+import { prisma } from '@/lib/db/client';
 import { createLogger } from '@/lib/logger';
 
 const log = createLogger('TaskRoomMessagesAPI');
@@ -35,12 +36,19 @@ export async function POST(
     return NextResponse.json({ error: 'Task or chat room not found' }, { status: 404 });
   }
 
-  if (task.status !== 'ACTIVE') {
-    return NextResponse.json({ error: 'Task is not active' }, { status: 400 });
+  if (task.status === 'COMPLETED') {
+    return NextResponse.json({ error: 'Task is completed, cannot send messages' }, { status: 400 });
   }
 
   // TODO: Get actual userId from auth session
   const userId = body.userId ?? 'anonymous';
+
+  // Ensure user exists (anonymous user for now)
+  await prisma.user.upsert({
+    where: { id: userId },
+    update: {},
+    create: { id: userId, email: `${userId}@example.com`, name: userId },
+  });
 
   const message = await messageDb.create({
     roomId: task.chatRoom.id,
