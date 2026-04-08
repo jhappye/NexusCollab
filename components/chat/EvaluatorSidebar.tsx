@@ -2,7 +2,7 @@
 
 import type { Evaluation } from '@prisma/client';
 import type { EvalDimension } from '@/lib/types/task-chat';
-import { EvaluationCard } from './EvaluationCard';
+import { EvaluationCard, EvaluationCardProps } from './EvaluationCard';
 import { Button } from '@/components/ui/button';
 import { PlayCircle } from 'lucide-react';
 
@@ -27,10 +27,14 @@ export function EvaluatorSidebar({
 
         {latestEval ? (
           <EvaluationCard
-            evaluation={{
-              ...latestEval,
-              dimensions: (latestEval.dimensions as unknown as EvalDimension[] | null) ?? [],
-            }}
+            evaluation={
+              {
+                ...latestEval,
+                dimensions: latestEval.dimensions == null
+                  ? []
+                  : (latestEval.dimensions as unknown as EvalDimension[]),
+              } as unknown as EvaluationCardProps['evaluation']
+            }
           />
         ) : (
           <div className="rounded-lg border border-slate-800 bg-slate-900 p-3 text-center">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,12 +25,12 @@ interface Invite {
 }
 
 const STEPS = [
-  { id: 1, title: 'Name your workspace' },
-  { id: 2, title: 'Invite members' },
-  { id: 3, title: 'Configure AI agents' },
+  { id: 1, title: '班级名称' },
+  { id: 2, title: '邀请成员' },
+  { id: 3, title: '配置智能体' },
 ];
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const wsId = searchParams.get('wsId');
@@ -107,7 +107,7 @@ export default function OnboardingPage() {
 
   const handleComplete = async () => {
     if (!workspaceName.trim()) {
-      setError('Workspace name is required');
+      setError('请输入班级名称');
       return;
     }
 
@@ -134,12 +134,12 @@ export default function OnboardingPage() {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to update workspace');
+        throw new Error('更新失败');
       }
 
       router.push(`/workspace/${wsId}`);
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError('出错了，请重试');
     } finally {
       setLoading(false);
     }
@@ -153,7 +153,7 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Workspace Onboarding</CardTitle>
+          <CardTitle className="text-xl">班级设置</CardTitle>
           {/* Step indicator */}
           <div className="flex items-center justify-center gap-2 mt-4">
             {STEPS.map((step, idx) => (
@@ -195,24 +195,24 @@ export default function OnboardingPage() {
           {currentStep === 1 && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="wsName">Workspace name</Label>
+                <Label htmlFor="wsName">班级名称</Label>
                 <Input
                   id="wsName"
-                  placeholder="My Awesome Workspace"
+                  placeholder="例如：三年级一班"
                   value={workspaceName}
                   onChange={(e) => setWorkspaceName(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="wsLogo">Logo URL (optional)</Label>
+                <Label htmlFor="wsLogo">Logo URL（可选）</Label>
                 <Input
                   id="wsLogo"
                   placeholder="https://example.com/logo.png"
                   disabled
-                  title="Logo upload coming soon"
+                  title="Logo 上传即将推出"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Logo upload coming soon
+                  Logo 上传即将推出
                 </p>
               </div>
             </div>
@@ -222,12 +222,12 @@ export default function OnboardingPage() {
           {currentStep === 2 && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="inviteEmail">Email address</Label>
+                <Label htmlFor="inviteEmail">邮箱地址</Label>
                 <div className="flex gap-2">
                   <Input
                     id="inviteEmail"
                     type="email"
-                    placeholder="colleague@example.com"
+                    placeholder="输入邮箱地址"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     onKeyDown={(e) => {
@@ -238,14 +238,14 @@ export default function OnboardingPage() {
                     }}
                   />
                   <Button onClick={handleAddInvite} variant="outline">
-                    Add
+                    添加
                   </Button>
                 </div>
               </div>
 
               {invites.length > 0 && (
                 <div className="space-y-2">
-                  <Label>Pending invites</Label>
+                  <Label>待邀请列表</Label>
                   <ul className="space-y-2">
                     {invites.map((invite) => (
                       <li
@@ -258,7 +258,7 @@ export default function OnboardingPage() {
                           size="sm"
                           onClick={() => handleRemoveInvite(invite.id)}
                         >
-                          Remove
+                          移除
                         </Button>
                       </li>
                     ))}
@@ -268,7 +268,7 @@ export default function OnboardingPage() {
 
               {invites.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  No invites added yet. You can skip this step.
+                  还没有添加邀请，可以跳过此步骤
                 </p>
               )}
             </div>
@@ -278,10 +278,10 @@ export default function OnboardingPage() {
           {currentStep === 3 && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="provider">LLM Provider</Label>
+                <Label htmlFor="provider">LLM 提供商</Label>
                 <Select value={selectedProvider} onValueChange={setSelectedProvider}>
                   <SelectTrigger id="provider">
-                    <SelectValue placeholder="Select provider" />
+                    <SelectValue placeholder="选择提供商" />
                   </SelectTrigger>
                   <SelectContent>
                     {providers.map((provider) => (
@@ -294,10 +294,10 @@ export default function OnboardingPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="modelName">Model name</Label>
+                <Label htmlFor="modelName">模型名称</Label>
                 <Input
                   id="modelName"
-                  placeholder="e.g., gpt-4o, claude-3-opus"
+                  placeholder="例如：gpt-4o, claude-3-opus"
                   value={modelName}
                   onChange={(e) => setModelName(e.target.value)}
                 />
@@ -323,18 +323,39 @@ export default function OnboardingPage() {
               onClick={handleBack}
               disabled={currentStep === 1}
             >
-              Back
+              上一步
             </Button>
             {currentStep < 3 ? (
-              <Button onClick={handleNext}>Continue</Button>
+              <Button onClick={handleNext}>继续</Button>
             ) : (
               <Button onClick={handleComplete} disabled={loading}>
-                {loading ? 'Saving...' : 'Complete Setup'}
+                {loading ? '保存中...' : '完成设置'}
               </Button>
             )}
           </div>
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-lg p-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-muted rounded w-1/2 mx-auto" />
+          <div className="h-4 bg-muted rounded w-3/4 mx-auto" />
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <OnboardingContent />
+    </Suspense>
   );
 }

@@ -31,7 +31,7 @@ export function NewTaskModal({ workspaceId, open, onOpenChange, onCreated }: New
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? 'Failed to create task');
+        setError(data.error ?? '创建任务失败');
         return;
       }
 
@@ -39,7 +39,7 @@ export function NewTaskModal({ workspaceId, open, onOpenChange, onCreated }: New
       onCreated(data.task.id);
       onOpenChange(false);
     } catch {
-      setError('Something went wrong');
+      setError('出错了，请重试');
     } finally {
       setLoading(false);
     }
@@ -48,10 +48,10 @@ export function NewTaskModal({ workspaceId, open, onOpenChange, onCreated }: New
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 shadow-xl">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800">
-          <h2 className="text-sm font-semibold text-slate-200">Create New Task</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+          <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">创建新任务</h2>
           <button
             onClick={() => onOpenChange(false)}
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -61,26 +61,25 @@ export function NewTaskModal({ workspaceId, open, onOpenChange, onCreated }: New
         </div>
 
         <div className="p-4 space-y-3">
-          <p className="text-xs text-muted-foreground">
-            Describe the task you want to create. AI will generate a title, description, and assign
-            an evaluator agent.
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            描述你想要创建的任务，AI 会自动生成标题、描述，并分配评估智能体。
           </p>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="e.g., Q2 sales training task for the onboarding team..."
+            placeholder="例如：为新同学创建一个Q2销售培训任务..."
             rows={4}
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-none"
+            className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-800 dark:text-slate-50 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
           />
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && <p className="text-xs text-red-500">{error}</p>}
         </div>
 
-        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-800">
+        <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-slate-200 dark:border-slate-800">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            取消
           </Button>
           <Button onClick={handleCreate} disabled={loading || !prompt.trim()}>
-            {loading ? 'Creating...' : 'Create Task'}
+            {loading ? '创建中...' : '创建任务'}
           </Button>
         </div>
       </div>

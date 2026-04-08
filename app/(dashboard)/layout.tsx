@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 import { Menu } from 'lucide-react';
-import { Sheet } from '@/components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 const SIDEBAR_KEY = 'nexus-sidebar-collapsed';
 
@@ -43,9 +43,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {isMobile && (
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <Sheet.Content side="left" className="p-0 w-64">
+          <SheetContent side="left" className="p-0 w-64">
             <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
-          </Sheet.Content>
+          </SheetContent>
         </Sheet>
       )}
 

@@ -225,3 +225,19 @@ export async function stageExists(stageId: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Rename a stage
+ */
+export async function renameStage(stageId: string, newName: string): Promise<void> {
+  try {
+    await db.stages.update(stageId, {
+      name: newName,
+      updatedAt: Date.now(),
+    });
+    log.info(`Renamed stage ${stageId} to "${newName}"`);
+  } catch (error) {
+    log.error('Failed to rename stage:', error);
+    throw error;
+  }
+}

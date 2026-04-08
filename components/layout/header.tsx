@@ -15,28 +15,28 @@ interface BreadcrumbSegment {
 }
 
 function buildBreadcrumbs(pathname: string): BreadcrumbSegment[] {
-  const segments: BreadcrumbSegment[] = [{ label: 'NexusCollab', href: '/workspaces' }];
+  const segments: BreadcrumbSegment[] = [{ label: 'NexusCollab', href: '/' }];
 
   if (pathname.startsWith('/workspace/')) {
     const parts = pathname.split('/').filter(Boolean);
     // parts: ['workspace', wsId, 'task', taskId, 'room']
     if (parts[1]) {
-      segments.push({ label: 'Workspace', href: `/workspace/${parts[1]}` });
+      segments.push({ label: '班级', href: `/workspace/${parts[1]}` });
     }
     if (parts[3]) {
-      segments.push({ label: 'Task', href: `/workspace/${parts[1]}/task/${parts[3]}` });
+      segments.push({ label: '任务', href: `/workspace/${parts[1]}/task/${parts[3]}` });
     }
     if (parts[4] === 'room') {
-      segments.push({ label: 'Chat Room' });
+      segments.push({ label: '聊天室' });
     }
   } else if (pathname.startsWith('/workspaces')) {
-    segments.push({ label: 'Workspaces' });
+    segments.push({ label: '我的班级' });
   } else if (pathname === '/my-tasks') {
-    segments.push({ label: 'My Tasks' });
+    segments.push({ label: '我的任务' });
   } else if (pathname === '/activity') {
-    segments.push({ label: 'Activity' });
+    segments.push({ label: '活动' });
   } else if (pathname === '/settings') {
-    segments.push({ label: 'Settings' });
+    segments.push({ label: '设置' });
   }
 
   return segments;
@@ -87,7 +87,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
         )}
       >
         <Search className="h-3.5 w-3.5" />
-        <span className="text-xs">Search...</span>
+        <span className="text-xs">搜索...</span>
         <kbd className="ml-2 rounded border border-slate-700 px-1.5 py-0.5 text-[10px] font-mono text-slate-500">
           ⌘K
         </kbd>

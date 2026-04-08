@@ -48,8 +48,33 @@ export default function MembersSettingsPage() {
         fetch(`/api/workspace/${wsId}`),
         fetch(`/api/workspace/${wsId}/invites`),
       ]);
-      const wsData = await wsRes.json();
-      const invitesData = await invitesRes.json();
+
+      // Check if responses are OK before parsing JSON
+      if (!wsRes.ok || !invitesRes.ok) {
+        console.error('API returned error status');
+        setMembers([]);
+        setInvites([]);
+        return;
+      }
+
+      const wsText = await wsRes.text();
+      const invitesText = await invitesRes.text();
+
+      let wsData: { workspace?: { members?: Member[] } | null } = { workspace: null };
+      let invitesData: { invites?: Invite[] } = { invites: [] };
+
+      try {
+        wsData = JSON.parse(wsText);
+      } catch {
+        console.error('Failed to parse workspace response');
+      }
+
+      try {
+        invitesData = JSON.parse(invitesText);
+      } catch {
+        console.error('Failed to parse invites response');
+      }
+
       setMembers(wsData.workspace?.members ?? []);
       setInvites(invitesData.invites ?? []);
     } catch (error) {
@@ -130,9 +155,9 @@ export default function MembersSettingsPage() {
     <SettingsLayout wsId={wsId} currentTab="members">
       <div className="space-y-8 max-w-2xl">
         <div>
-          <h2 className="text-lg font-semibold">Members</h2>
+          <h2 className="text-lg font-semibold">成员管理</h2>
           <p className="text-sm text-muted-foreground">
-            Manage workspace members and their roles.
+            管理班级成员和他们的角色
           </p>
         </div>
 
@@ -140,24 +165,24 @@ export default function MembersSettingsPage() {
         <div className="space-y-4">
           <h3 className="text-sm font-medium flex items-center gap-2">
             <Mail className="h-4 w-4" />
-            Invite by Email
+            邀请成员
           </h3>
           <form onSubmit={handleInvite} className="flex gap-2">
             <Input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="colleague@example.com"
+              placeholder="输入邮箱地址..."
               className="max-w-xs"
             />
             <Button type="submit" disabled={inviting || !email.trim()}>
               {inviting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Inviting...
+                  邀请中...
                 </>
               ) : (
-                'Invite'
+                '邀请'
               )}
             </Button>
           </form>
@@ -166,7 +191,7 @@ export default function MembersSettingsPage() {
           {invites.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Pending Invites
+                待接受邀请
               </h4>
               <div className="space-y-2">
                 {invites.map(invite => (
@@ -181,7 +206,7 @@ export default function MembersSettingsPage() {
                       <span className="text-sm">{invite.email}</span>
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      Pending
+                      待接受
                     </Badge>
                   </div>
                 ))}
@@ -194,56 +219,62 @@ export default function MembersSettingsPage() {
         <div className="space-y-4">
           <h3 className="text-sm font-medium flex items-center gap-2">
             <Users className="h-4 w-4" />
-            Team Members ({members.length})
+            班级成员 ({members.length})
           </h3>
           <div className="space-y-2">
-            {members.map(member => (
-              <div
-                key={member.id}
-                className="flex items-center justify-between py-3 px-3 rounded-lg border border-slate-800 hover:border-slate-700 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-indigo-500/20 text-indigo-400 text-xs">
-                      {getInitials(member.user.name, member.user.email)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {member.user.name || member.user.email}
-                    </p>
-                    <p className="text-xs text-slate-400 truncate">{member.user.email}</p>
+            {members.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                暂无成员
+              </div>
+            ) : (
+              members.map(member => (
+                <div
+                  key={member.id}
+                  className="flex items-center justify-between py-3 px-3 rounded-lg border border-slate-800 hover:border-slate-700 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-indigo-500/20 text-indigo-400 text-xs">
+                        {getInitials(member.user.name, member.user.email)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {member.user.name || member.user.email}
+                      </p>
+                      <p className="text-xs text-slate-400 truncate">{member.user.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge variant={getRoleBadgeVariant(member.role)} className="gap-1">
+                      {member.role === 'ADMIN' && <Crown className="h-3 w-3" />}
+                      {member.role === 'ADMIN' ? '管理员' : member.role === 'MEMBER' ? '成员' : '查看者'}
+                    </Badge>
+                    <Select
+                      value={member.role}
+                      onValueChange={value => handleRoleChange(member.userId, value)}
+                    >
+                      <SelectTrigger className="w-28 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ADMIN">管理员</SelectItem>
+                        <SelectItem value="MEMBER">成员</SelectItem>
+                        <SelectItem value="VIEWER">查看者</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-slate-400 hover:text-red-400"
+                      onClick={() => handleRemoveMember(member.userId)}
+                    >
+                      <UserMinus className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Badge variant={getRoleBadgeVariant(member.role)} className="gap-1">
-                    {member.role === 'ADMIN' && <Crown className="h-3 w-3" />}
-                    {member.role}
-                  </Badge>
-                  <Select
-                    value={member.role}
-                    onValueChange={value => handleRoleChange(member.userId, value)}
-                  >
-                    <SelectTrigger className="w-28 h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ADMIN">Admin</SelectItem>
-                      <SelectItem value="MEMBER">Member</SelectItem>
-                      <SelectItem value="VIEWER">Viewer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-slate-400 hover:text-red-400"
-                    onClick={() => handleRemoveMember(member.userId)}
-                  >
-                    <UserMinus className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

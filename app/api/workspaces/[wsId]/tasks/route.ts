@@ -33,7 +33,8 @@ export async function POST(
   const userId = body.userId ?? 'anonymous';
 
   // AI-assisted task creation: call LLM to generate title + description + agentConfig
-  let title = 'New Task';
+  // Fallback to user prompt if AI fails
+  let title = body.prompt.slice(0, 80) || '新任务';
   let description = body.prompt;
   let agentConfig = {
     evaluatorId: 'default-evaluator',
@@ -66,7 +67,7 @@ Return only valid JSON, no markdown formatting.`,
     if (parsed.description) description = parsed.description;
     if (parsed.agentConfig) agentConfig = { ...agentConfig, ...parsed.agentConfig };
   } catch (err) {
-    log.warn('AI task generation failed, using defaults:', err);
+    log.warn('AI task generation failed, using user prompt as title:', err);
     generationStatus = 'partial';
   }
 

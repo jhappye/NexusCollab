@@ -2,6 +2,7 @@ import { taskDb } from '@/lib/db/task';
 import { messageDb } from '@/lib/db/message';
 import { evaluationDb } from '@/lib/db/evaluation';
 import ChatRoomClient from './ChatRoomClient';
+import type { MessageWithAuthor, Reaction } from '@/lib/types/task-chat';
 
 interface ChatRoomPageProps {
   params: Promise<{ wsId: string; taskId: string }>;
@@ -18,10 +19,16 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
   const messagesResult = await messageDb.getMessages(task.chatRoom.id, undefined, 50);
 
   // Transform Prisma messages to match MessageWithAuthor type
-  const messages = messagesResult.messages.map((msg) => ({
+  const transformMessage = (msg: typeof messagesResult.messages[number]): MessageWithAuthor => ({
     ...msg,
-    reactions: (msg.reactions as unknown as import('@/lib/types/task-chat').Reaction[]) ?? [],
-  }));
+    reactions: (msg.reactions as unknown as Reaction[]) ?? [],
+    replies: msg.replies?.map((reply) => ({
+      ...reply,
+      reactions: (reply.reactions as unknown as Reaction[]) ?? [],
+    })),
+  });
+
+  const messages = messagesResult.messages.map(transformMessage);
   const evaluations = await evaluationDb.getByTask(taskId);
 
   const participants = task.workspace.members.map((m) => ({

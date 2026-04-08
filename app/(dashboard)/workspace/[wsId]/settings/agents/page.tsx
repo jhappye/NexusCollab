@@ -79,14 +79,14 @@ export default function AgentsSettingsPage() {
     <SettingsLayout wsId={wsId} currentTab="agents">
       <div className="space-y-6 max-w-lg">
         <div>
-          <h2 className="text-lg font-semibold">Agent Settings</h2>
+          <h2 className="text-lg font-semibold">智能体设置</h2>
           <p className="text-sm text-muted-foreground">
-            Configure the AI agent provider and behavior for this workspace.
+            配置班级的 AI 智能体提供商和行为
           </p>
         </div>
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Provider</label>
+            <label className="text-xs font-medium text-slate-300">提供商</label>
             <Select
               value={provider}
               onValueChange={(v: Provider) => setProvider(v)}
@@ -104,11 +104,11 @@ export default function AgentsSettingsPage() {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Model</label>
+            <label className="text-xs font-medium text-slate-300">模型</label>
             <Input
               value={model}
               onChange={e => setModel(e.target.value)}
-              placeholder="e.g., gpt-4o, claude-3-5-sonnet-20241022"
+              placeholder="例如：gpt-4o, claude-3-5-sonnet-20241022"
             />
           </div>
           <div className="space-y-1.5">
@@ -125,16 +125,16 @@ export default function AgentsSettingsPage() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">System Prompt</label>
+            <label className="text-xs font-medium text-slate-300">系统提示词</label>
             <Textarea
               value={systemPrompt}
               onChange={e => setSystemPrompt(e.target.value)}
-              placeholder="You are a helpful AI teaching assistant..."
+              placeholder="你是一个有用的 AI 教学助手..."
               className="min-h-32"
             />
           </div>
           <Button onClick={handleSave} disabled={saving} size="sm">
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? '保存中...' : '保存修改'}
           </Button>
         </div>
       </div>

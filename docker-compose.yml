@@ -1,15 +1,35 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: nexuscollab
+      POSTGRES_PASSWORD: nexuscollab_secret
+      POSTGRES_DB: nexuscollab
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexuscollab"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   nexuscollab:
     build: .
     ports:
       - "3000:3000"
     env_file:
       - .env.local
+    environment:
+      DATABASE_URL: postgresql://nexuscollab:nexuscollab_secret@db:5432/nexuscollab?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
-      # Optional: mount server-providers.yml for provider config
-      # - ./server-providers.yml:/app/server-providers.yml:ro
       - nexuscollab-data:/app/data
     restart: unless-stopped
 
 volumes:
+  postgres-data:
   nexuscollab-data:

@@ -10,7 +10,10 @@ export interface CreateWorkspaceInput {
 export interface UpdateWorkspaceInput {
   name?: string;
   description?: string;
-  agentConfig?: Record<string, unknown> | null;
+  logoUrl?: string | null;
+  timezone?: string;
+  onboardingComplete?: boolean;
+  agentConfig?: object | null;
 }
 
 export const workspaceDb = {
@@ -27,6 +30,17 @@ export const workspaceDb = {
   },
 
   async create(data: CreateWorkspaceInput) {
+    // Ensure user exists first
+    await prisma.user.upsert({
+      where: { id: data.ownerId },
+      update: {},
+      create: {
+        id: data.ownerId,
+        email: `${data.ownerId}@example.com`,
+        name: data.ownerId,
+      },
+    });
+
     const workspace = await prisma.workspace.create({
       data: {
         name: data.name,
@@ -56,7 +70,7 @@ export const workspaceDb = {
   async update(workspaceId: string, data: UpdateWorkspaceInput) {
     return prisma.workspace.update({
       where: { id: workspaceId },
-      data,
+      data: data as Parameters<typeof prisma.workspace.update>[0]['data'],
     });
   },
 

@@ -3,7 +3,7 @@ import type { EvalDimension } from '@/lib/types/task-chat';
 import { EvalDimensionBar } from './EvalDimensionBar';
 import { cn } from '@/lib/utils';
 
-interface EvaluationCardProps {
+export interface EvaluationCardProps {
   evaluation: Evaluation & { dimensions: EvalDimension[] | unknown; targetUser?: { name: string | null } | null };
 }
 
@@ -46,9 +46,9 @@ export function EvaluationCard({ evaluation }: EvaluationCardProps) {
         </div>
       </div>
 
-      {evaluation.dimensions.length > 0 && (
+      {Array.isArray(evaluation.dimensions) && evaluation.dimensions.length > 0 && (
         <div className="space-y-2">
-          {evaluation.dimensions.map((dim, i) => (
+          {(evaluation.dimensions as unknown as EvalDimension[]).map((dim, i) => (
             <EvalDimensionBar key={i} dimension={dim} />
           ))}
         </div>

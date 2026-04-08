@@ -1,5 +1,5 @@
-import { defaultLocale, type Locale } from './types';
-export { type Locale, defaultLocale } from './types';
+import { defaultLocale, supportedLocales, type Locale } from './types';
+export { type Locale, defaultLocale, supportedLocales } from './types';
 import { commonZhCN, commonEnUS } from './common';
 import { stageZhCN, stageEnUS } from './stage';
 import { chatZhCN, chatEnUS } from './chat';
@@ -25,13 +25,22 @@ export const translations = {
 
 export type TranslationKey = keyof (typeof translations)[typeof defaultLocale];
 
-export function translate(locale: Locale, key: string): string {
+export function translate(locale: Locale, key: string, params?: Record<string, string | number>): string {
   const keys = key.split('.');
   let value: unknown = translations[locale];
   for (const k of keys) {
     value = (value as Record<string, unknown>)?.[k];
   }
-  return (typeof value === 'string' ? value : undefined) ?? key;
+  let result = (typeof value === 'string' ? value : undefined) ?? key;
+
+  // Replace template variables like {name} with actual values
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      result = result.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+    }
+  }
+
+  return result;
 }
 
 export function getClientTranslation(key: string): string {

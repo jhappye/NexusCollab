@@ -6,22 +6,22 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
   LayoutGrid,
-  ListTodo,
-  ActivitySquare,
+  BookOpen,
+  MessageSquare,
   Settings,
   ChevronLeft,
   Bell,
   HelpCircle,
-  ChevronDown,
+  Users,
 } from 'lucide-react';
 
 const COLLAPSED_KEY = 'sidebar-collapsed';
 
 const navItems = [
-  { href: '/workspaces', label: 'Workspaces', icon: LayoutGrid },
-  { href: '/my-tasks', label: 'My Tasks', icon: ListTodo },
-  { href: '/activity', label: 'Activity Feed', icon: ActivitySquare },
-  { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/workspaces', label: '我的班级', icon: LayoutGrid },
+  { href: '/workspace', label: '任务中心', icon: BookOpen },
+  { href: '/chat', label: '消息', icon: MessageSquare },
+  { href: '/settings', label: '设置', icon: Settings },
 ];
 
 interface SidebarProps {
@@ -152,7 +152,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <ChevronLeft
             className={cn('h-3.5 w-3.5 shrink-0 transition-transform', collapsed && 'rotate-180')}
           />
-          {!collapsed && <span>Collapse</span>}
+          {!collapsed && <span>收起</span>}
         </button>
       </div>
     </aside>
