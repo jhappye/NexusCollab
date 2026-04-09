@@ -1,19 +1,31 @@
 import { cn } from '@/lib/utils';
+import type { TaskStatus } from '@/lib/types/task';
+import { TASK_STATUS_LABELS, TASK_STATUS_COLORS } from '@/lib/types/task';
 
-type TaskStatus = 'DRAFT' | 'ACTIVE' | 'REVIEWING' | 'COMPLETED';
+interface TaskStatusBadgeProps {
+  status: TaskStatus;
+  onClick?: () => void;
+  className?: string;
+}
 
-const statusConfig: Record<TaskStatus, { label: string; className: string }> = {
-  DRAFT: { label: 'Draft', className: 'bg-slate-500/20 text-slate-400' },
-  ACTIVE: { label: 'Active', className: 'bg-indigo-500/20 text-indigo-400' },
-  REVIEWING: { label: 'Reviewing', className: 'bg-amber-500/20 text-amber-400' },
-  COMPLETED: { label: 'Completed', className: 'bg-emerald-500/20 text-emerald-400' },
-};
+export function TaskStatusBadge({ status, onClick, className }: TaskStatusBadgeProps) {
+  const colors = TASK_STATUS_COLORS[status];
+  const label = TASK_STATUS_LABELS[status];
 
-export function TaskStatusBadge({ status }: { status: TaskStatus }) {
-  const config = statusConfig[status] ?? statusConfig.DRAFT;
+  const Component = onClick ? 'button' : 'span';
+
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium', config.className)}>
-      {config.label}
-    </span>
+    <Component
+      onClick={onClick}
+      className={cn(
+        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium transition-colors',
+        colors.bg,
+        colors.text,
+        onClick && 'cursor-pointer hover:opacity-80',
+        className
+      )}
+    >
+      {label}
+    </Component>
   );
 }
