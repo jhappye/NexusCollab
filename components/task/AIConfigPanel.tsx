@@ -99,19 +99,19 @@ export function AIConfigPanel({ config, onChange, expanded, onExpandedChange }: 
                   key={dim}
                   className={cn(
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs cursor-pointer transition-colors',
-                    config.dimensions.includes(dim)
+                    (config.dimensions || []).includes(dim)
                       ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                   )}
                 >
                   <input
                     type="checkbox"
-                    checked={config.dimensions.includes(dim)}
+                    checked={(config.dimensions || []).includes(dim)}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        onChange({ ...config, dimensions: [...config.dimensions, dim] });
+                        onChange({ ...config, dimensions: [...(config.dimensions || []), dim] });
                       } else {
-                        onChange({ ...config, dimensions: config.dimensions.filter((d) => d !== dim) });
+                        onChange({ ...config, dimensions: (config.dimensions || []).filter((d: string) => d !== dim) });
                       }
                     }}
                     className="sr-only"
