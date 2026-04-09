@@ -48,7 +48,6 @@ export function TaskEditModal({
 }: TaskEditModalProps) {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
-  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
   const [aiExpanded, setAiExpanded] = useState(false);
   const [formData, setFormData] = useState<TaskFormData>(DEFAULT_FORM_DATA);
@@ -73,52 +72,9 @@ export function TaskEditModal({
     }
   }, [open, task]);
 
-  const handleAIGenerate = async () => {
-    if (!prompt.trim()) return;
-    setGenerating(true);
-    setError('');
-
-    try {
-      const { resolveModel } = await import('@/lib/server/resolve-model');
-      const { generateText } = await import('ai');
-
-      const { model } = resolveModel({} as any);
-      const { text } = await generateText({
-        model: model as any,
-        prompt: `Based on this user request: "${prompt}"
-Generate a task JSON with fields:
-- title: clear task name (max 80 chars)
-- description: 2-3 sentence description
-- agentConfig: { evaluatorName, promptTemplate, dimensions[], coachingEnabled }
-
-Return only valid JSON, no markdown formatting.`,
-      });
-
-      const parsed = JSON.parse(text);
-      setFormData({
-        ...formData,
-        title: parsed.title || prompt.slice(0, 80),
-        description: parsed.description || prompt,
-        agentConfig: parsed.agentConfig ? {
-          ...DEFAULT_AGENT_CONFIG,
-          ...parsed.agentConfig,
-        } : DEFAULT_AGENT_CONFIG,
-      });
-      setAiExpanded(true);
-    } catch {
-      setFormData({
-        ...formData,
-        title: prompt.slice(0, 80),
-        description: prompt,
-      });
-    } finally {
-      setGenerating(false);
-    }
-  };
-
   const handleSubmit = async () => {
-    if (!formData.title.trim()) {
-      setError('请输入任务标题');
+    if (!formData.title.trim() && !prompt.trim()) {
+      setError('请输入任务标题或描述');
       return;
     }
 
@@ -147,6 +103,7 @@ Return only valid JSON, no markdown formatting.`,
         onUpdated?.();
         onOpenChange(false);
       } else {
+        // For creation, send everything to API which handles AI generation
         const res = await fetch(`/api/workspaces/${workspaceId}/tasks`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -193,7 +150,7 @@ Return only valid JSON, no markdown formatting.`,
         </div>
 
         <div className="p-4 space-y-4">
-          {/* AI Generate Section */}
+          {/* AI Prompt Section */}
           {!isEditMode && (
             <div className="rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 p-4 border border-indigo-100 dark:border-indigo-900/50">
               <div className="flex items-center gap-2 mb-2">
@@ -207,25 +164,9 @@ Return only valid JSON, no markdown formatting.`,
                 rows={2}
                 className="w-full rounded-lg border border-indigo-200 dark:border-indigo-800 bg-white/80 dark:bg-slate-900/80 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
               />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleAIGenerate}
-                disabled={generating || !prompt.trim()}
-                className="mt-2"
-              >
-                {generating ? (
-                  <>
-                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                    AI 生成中...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-3 w-3 mr-1" />
-                    AI 生成
-                  </>
-                )}
-              </Button>
+              <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-2">
+                提示：输入描述后点击"创建任务"，AI 会自动生成完整信息
+              </p>
             </div>
           )}
 
@@ -298,7 +239,12 @@ Return only valid JSON, no markdown formatting.`,
             取消
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? '处理中...' : isEditMode ? '保存更改' : '创建任务'}
+            {loading ? (
+              <>
+                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                处理中...
+              </>
+            ) : isEditMode ? '保存更改' : '创建任务'}
           </Button>
         </div>
       </div>

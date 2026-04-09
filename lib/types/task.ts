@@ -2,6 +2,20 @@
 
 export type TaskStatus = 'DRAFT' | 'ACTIVE' | 'REVIEWING' | 'COMPLETED';
 
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: TaskStatus;
+  createdAt: string;
+  updatedAt: string;
+  dueAt: string | null;
+  createdBy: string;
+  workspaceId: string;
+  agentConfig: AgentConfigData | Record<string, unknown>;
+  _count?: { evaluations: number };
+}
+
 export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
   DRAFT: '草稿',
   ACTIVE: '进行中',

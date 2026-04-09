@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { WorkspaceHeader } from '@/components/workspace/WorkspaceHeader';
 import { TaskCard } from '@/components/task/TaskCard';
 import { TaskEditModal } from '@/components/task/TaskEditModal';
@@ -25,11 +25,9 @@ interface Workspace {
 
 export default function WorkspacePage({ params }: { params: Promise<{ wsId: string }> }) {
   const { wsId } = use(params);
-  const router = useRouter();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [newTaskOpen, setNewTaskOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -280,16 +278,8 @@ export default function WorkspacePage({ params }: { params: Promise<{ wsId: stri
           </SheetContent>
         </Sheet>
 
-        {/* Error */}
-        {error && (
-          <div className="text-center py-12">
-            <p className="text-sm text-red-400">{error}</p>
-            <button onClick={() => window.location.reload()} className="text-xs text-indigo-400 underline mt-1">重试</button>
-          </div>
-        )}
-
         {/* Empty State */}
-        {!error && filteredTasks.length === 0 && (
+        {filteredTasks.length === 0 && (
           <div className="text-center py-12">
             <p className="text-sm text-muted-foreground">还没有任务</p>
             <p className="text-xs text-muted-foreground mt-1">创建你的第一个任务开始吧</p>
@@ -297,7 +287,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ wsId: stri
         )}
 
         {/* Grid View */}
-        {!error && filteredTasks.length > 0 && viewMode === 'grid' && (
+        {filteredTasks.length > 0 && viewMode === 'grid' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredTasks.map((task) => (
               <div key={task.id} className="relative">
@@ -320,7 +310,7 @@ export default function WorkspacePage({ params }: { params: Promise<{ wsId: stri
         )}
 
         {/* Table View */}
-        {!error && filteredTasks.length > 0 && viewMode === 'table' && (
+        {filteredTasks.length > 0 && viewMode === 'table' && (
           <TaskTableView
             tasks={filteredTasks}
             workspaceId={wsId}
@@ -357,7 +347,14 @@ export default function WorkspacePage({ params }: { params: Promise<{ wsId: stri
         workspaceId={wsId}
         open={!!editTask}
         onOpenChange={(open) => !open && setEditTask(null)}
-        task={editTask ?? undefined}
+        task={editTask ? {
+          id: editTask.id,
+          title: editTask.title,
+          description: editTask.description,
+          status: editTask.status,
+          dueAt: editTask.dueAt,
+          agentConfig: editTask.agentConfig as import('@/lib/types/task').AgentConfigData,
+        } : undefined}
         onUpdated={handleTaskUpdated}
       />
     </div>

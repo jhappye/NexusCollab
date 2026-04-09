@@ -6,8 +6,6 @@ import { TaskStatusBadge } from './TaskStatusBadge';
 import { TaskStatusDropdown } from './TaskStatusDropdown';
 import { TaskMenuButton } from './TaskMenuButton';
 import { Task, TaskStatus } from '@/lib/types/task';
-import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 
@@ -146,7 +144,7 @@ export function TaskTableView({
                 {task.description}
               </td>
               <td className="px-3 py-3 text-muted-foreground text-xs">
-                {formatDistanceToNow(new Date(task.updatedAt), { addSuffix: true, locale: zhCN })}
+                {new Date(task.updatedAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })}
               </td>
               <td className="px-3 py-3">
                 <TaskMenuButton

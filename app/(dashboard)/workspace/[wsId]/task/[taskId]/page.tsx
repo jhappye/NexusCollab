@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -9,7 +9,7 @@ import { TaskStatusDropdown } from '@/components/task/TaskStatusDropdown';
 import { AIConfigPanel } from '@/components/task/AIConfigPanel';
 import { TaskEditModal } from '@/components/task/TaskEditModal';
 import { ArrowLeft, MessageSquare, Clock, Pencil } from 'lucide-react';
-import { Task, AgentConfigData, TASK_STATUS_LABELS } from '@/lib/types/task';
+import { Task, AgentConfigData } from '@/lib/types/task';
 import { toast } from 'sonner';
 
 export default function TaskDetailPage({ params }: { params: Promise<{ wsId: string; taskId: string }> }) {
