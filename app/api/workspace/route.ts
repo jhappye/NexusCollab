@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     name: body.name,
     description: body.description,
     ownerId: userId,
+    id: body.id,
   });
 
   return NextResponse.json({ success: true, workspace });

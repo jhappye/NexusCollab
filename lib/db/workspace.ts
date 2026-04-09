@@ -5,6 +5,7 @@ export interface CreateWorkspaceInput {
   name: string;
   description?: string;
   ownerId: string;
+  id?: string;
 }
 
 export interface UpdateWorkspaceInput {
@@ -43,6 +44,7 @@ export const workspaceDb = {
 
     const workspace = await prisma.workspace.create({
       data: {
+        id: data.id,
         name: data.name,
         description: data.description,
         members: {

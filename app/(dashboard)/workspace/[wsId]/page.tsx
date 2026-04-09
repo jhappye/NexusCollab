@@ -65,6 +65,26 @@ export default function WorkspacePage({ params }: { params: Promise<{ wsId: stri
         if (wsRes.ok) {
           const data = await wsRes.json();
           setWorkspace(data.workspace);
+        } else if (wsRes.status === 404) {
+          // Auto-create workspace if it doesn't exist
+          const createRes = await fetch('/api/workspace', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: '新班级', id: wsId }),
+          });
+          if (createRes.ok) {
+            const data = await createRes.json();
+            setWorkspace(data.workspace);
+          } else {
+            // Fallback to local state
+            setWorkspace({
+              id: wsId,
+              name: '新班级',
+              onboardingComplete: true,
+              _count: { tasks: 0, members: 1 },
+              myRole: 'ADMIN',
+            });
+          }
         } else {
           setWorkspace({
             id: wsId,
